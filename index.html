@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Life Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="app-layout">
+        <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+
+        <div class="sidebar" id="sidebar">
+            <h2>My App</h2>
+
+            <a href="index.html" class="active-link">Dashboard</a>
+            <a href="task-manager.html">Task Manager</a>
+            <a href="calendar.html">Calendar</a>
+
+            <button type = 'button' onclick="logout()" class="logout-btn">Logout</button>
+        </div>
+
+        <div class="main-content">
+            <h1>Dashboard</h1>
+
+            <div class="dashboard-cards">
+                <div class="card">
+                    <h3>Tasks</h3>
+                    <p>Manage your daily tasks.</p>
+
+                    <div class="task-stat-row">
+                        <span>Tasks to complete</span>
+                        <span id="activeCount">0</span>
+                    </div>
+
+                    <div class="task-stat-row">
+                        <span>Total Tasks completed</span>
+                        <span id="completedCount">0</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Upcoming Events</h3>
+                    <div id="upcomingEvents">
+                        <p>Loading...</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Upcoming</h3>
+                    <p>Wait for future updates!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script type="module" src="main.js"></script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    
+    <div class="app-layout">
+        <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+
+        <div class="sidebar" id="sidebar">
+            <h2>My App</h2>
+
+            <a href="index.html">Dashboard</a>
+            <a href="task-manager.html">Task Manager</a>
+            <a href="calendar.html" class="active-link">Calendar</a>
+
+            <button type = 'button' onclick="logout()" class="logout-btn">Logout</button>
+        </div>
+
+        <div class="main-content">
+            <h1>Calendar</h1>
+
+            <div class="calendar-page">
+                <div class="event-panel-card">
+                    <h2>Add Event</h2>
+
+                    <input type="text" id="eventName" placeholder="Event Name">
+
+                    <label class="date-label">Start Date</label>
+                    <input type="date" id="eventStartDate">
+
+                    <label class="date-label">End Date</label>
+                    <input type="date" id="eventEndDate">
+
+                    <label class="checkbox-row">
+                        <input type="checkbox" id="eventYearly">
+                        Happens every year
+                    </label>
+
+                    <button onclick="addEvent()">Add</button>
+
+                    <h3>Upcoming Events</h3>
+                    <ul id="eventList"></ul>
+                </div>
+
+                <div class="calendar-panel card">
+                    <div class="calendar-header">
+                        <button onclick="previousMonth()">←</button>
+                        <h2 id="calendarTitle"></h2>
+                        <button onclick="nextMonth()">→</button>
+                    </div>
+
+                    <div class="calendar-grid calendar-days">
+                        <div>Sun</div>
+                        <div>Mon</div>
+                        <div>Tue</div>
+                        <div>Wed</div>
+                        <div>Thu</div>
+                        <div>Fri</div>
+                        <div>Sat</div>
+                    </div>
+
+                    <div id="calendarGrid" class="calendar-grid"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script type="module" src="calendar.js"></script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="app-layout">
+        <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+
+        <div class="sidebar" id="sidebar">
+            <h2>My App</h2>
+
+            <a href="index.html">Dashboard</a>
+            <a href="task-manager.html" class="active-link">Task Manager</a>
+            <a href="calendar.html">Calendar</a>
+
+            <button type = 'button' onclick="logout()" class="logout-btn">Logout</button>
+        </div>
+
+        <div class="main-content">
+            <div class="task-container">
+                <h1>My Tasks <button onclick="removeTasks()">Reset</button></h1>
+
+                <div class="input-section">
+                    <input id="taskInput" type="text" placeholder="Enter task">
+                    <input id="taskDeadLine" type="date">
+                    <button onclick="addTask()">Add</button>
+                </div>
+
+                <h2>Active Tasks</h2>
+                <ul id="taskList"></ul>
+
+                <h2>Archived Tasks</h2>
+                <input id="archiveSearch" type="text" placeholder="Search by task name or completed date (yyyy-mm-dd)" oninput="renderTasks()">
+
+                <ul id="archiveList"></ul>
+            </div>
+        </div>
+    </div>
+
+<script type="module" src="taskManager.js"></script>
+</body>
+</html>
