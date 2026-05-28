@@ -63,6 +63,15 @@
                 </div>
 
                 <button onclick="addExpense()">Add Expense</button>
+                <hr style="margin:20px 0;">
+
+                <h2>Cash In</h2>
+
+                <input id="cashInName" type="text" placeholder="Income source">
+
+                <input id="cashInAmount" type="number" step="0.01" placeholder="Amount">
+
+                <button onclick="addCashIn()">Add Cash In</button>
             </div>
 
             <div class="card">
@@ -73,6 +82,9 @@
                 </div>
 
                 <h3>Total This Month: $<span id="monthTotal">0.00</span></h3>
+
+                <h3>Cash In This Month: $<span id="cashInTotal">0.00</span></h3>
+                <h3>Net Balance: $<span id="netBalance">0.00</span></h3>
 
                 <div class="subscription-summary">
                     <h3>Recurring Subscriptions</h3>
@@ -99,6 +111,9 @@
                 </div>
 
                 <div id="categorySummary"></div>
+
+                <h3>Cash In</h3>
+                <ul id="cashInList"></ul>
 
                 <h3>Subscriptions</h3>
                 <ul id="subscriptionList"></ul>
