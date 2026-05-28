@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Archive</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app-layout">
+    <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+
+    <div class="sidebar" id="sidebar">
+        <h2>My App</h2>
+
+        <a href="index.html">Dashboard</a>
+        <a href="task-manager.html">Task Manager</a>
+        <a href="calendar.html">Calendar</a>
+        <a href="expense.html" class="active-link">Expenses</a>
+
+        <button type="button" onclick="logout()" class="logout-btn">Logout</button>
+    </div>
+
+    <div class="main-content">
+        <h1>Expense Archive</h1>
+
+        <div class="card">
+            <h2>Yearly Net Cash Overview</h2>
+
+            <div class="expense-header">
+                <button onclick="previousArchiveYear()">←</button>
+                <h2 id="archiveYearTitle"></h2>
+                <button onclick="nextArchiveYear()">→</button>
+            </div>
+
+            <canvas id="netCashChart" height="120"></canvas>
+        </div>
+
+        <div class="card" style="margin-top:24px;">
+            <h2>Monthly Archive</h2>
+
+            <div class="expense-header">
+                <button onclick="previousArchiveMonth()">←</button>
+                <h2 id="archiveMonthTitle"></h2>
+                <button onclick="nextArchiveMonth()">→</button>
+            </div>
+
+            <div class="archive-jump-row">
+                <input id="archiveMonthPicker" type="month">
+                <button onclick="jumpToArchiveMonth()">Go</button>
+            </div>
+
+            <h3>Cash Out: $<span id="archiveCashOut">0.00</span></h3>
+            <h3>Cash In: $<span id="archiveCashIn">0.00</span></h3>
+            <h3>Net Cash: $<span id="archiveNetCash">0.00</span></h3>
+
+            <div id="archiveCategorySummary"></div>
+
+            <h3>Cash In</h3>
+            <ul id="archiveCashInList"></ul>
+
+            <h3>Subscriptions Renewed This Month</h3>
+            <ul id="archiveSubscriptionList"></ul>
+
+            <h3>Expenses by Category</h3>
+            <ul id="archiveExpenseList"></ul>
+        </div>
+    </div>
+</div>
+
+<script type="module" src="expense-archive.js"></script>
+</body>
+</html>

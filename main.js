@@ -10,6 +10,7 @@ from "./firebase.js";
 
 let tasks = [];
 let events = [];
+let expenses = [];
 let currentUser = null;
 
 onAuthStateChanged(auth, user => {
@@ -167,6 +168,10 @@ async function loadDashboardData() {
         collection(db, "users", currentUser.uid, "events")
     );
 
+    let expenseSnapshot = await getDocs(
+        collection(db, "users", currentUser.uid, "expenses")
+    );
+
     tasks = taskSnapshot.docs.map(item => ({
         firebaseId: item.id,
         ...item.data()
@@ -177,9 +182,104 @@ async function loadDashboardData() {
         ...item.data()
     }));
 
+    expenses = expenseSnapshot.docs.map(item => ({
+        firebaseId: item.id,
+        ...item.data()
+    }));
+
     updateDashboard();
     renderUpcomingEvents();
     renderNotifications();
+    updateExpenseDashboard();
+}
+
+function updateExpenseDashboard() {
+    let cashOutElement = document.getElementById("dashboardCashOut");
+    let cashInElement = document.getElementById("dashboardCashIn");
+    let netCashElement = document.getElementById("dashboardNetCash");
+
+    if (!cashOutElement || !cashInElement || !netCashElement) return;
+
+    let thisMonth = getMonthKey(new Date());
+
+    let cashIns = expenses.filter(item => {
+        return item.type === "cashIn" && item.month === thisMonth;
+    });
+
+    let normalExpenses = expenses.filter(item => {
+        return (
+            item.type !== "cashIn" &&
+            !item.subscription &&
+            item.month === thisMonth
+        );
+    });
+
+    let subscriptions = expenses.filter(item => {
+        return item.type !== "cashIn" && item.subscription;
+    });
+
+    let subscriptionsThisMonth = subscriptions.filter(subscription => {
+        return subscriptionOccursInMonth(subscription, new Date());
+    });
+
+    let cashInTotal = cashIns.reduce((sum, item) => {
+        return sum + Number(item.amount);
+    }, 0);
+
+    let cashOutTotal = [
+        ...normalExpenses,
+        ...subscriptionsThisMonth
+    ].reduce((sum, item) => {
+        return sum + Number(item.price);
+    }, 0);
+
+    let netCash = cashInTotal - cashOutTotal;
+
+    cashOutElement.textContent = `$${cashOutTotal.toFixed(2)}`;
+    cashInElement.textContent = `$${cashInTotal.toFixed(2)}`;
+    netCashElement.textContent = `$${netCash.toFixed(2)}`;
+
+    if (netCash < 0) {
+        netCashElement.style.color = "#dc2626";
+    } else {
+        netCashElement.style.color = "#16a34a";
+    }
+}
+
+function getMonthKey(date) {
+    let year = date.getFullYear();
+    let month = String(date.getMonth() + 1).padStart(2, "0");
+
+    return `${year}-${month}`;
+}
+
+function subscriptionOccursInMonth(subscription, monthDate) {
+    let startDate =
+        subscription.subscriptionStartDate ||
+        subscription.date;
+
+    if (!startDate) return false;
+
+    let start = parseDate(startDate);
+
+    let viewYear = monthDate.getFullYear();
+    let viewMonth = monthDate.getMonth();
+
+    let startYear = start.getFullYear();
+    let startMonth = start.getMonth();
+
+    if (
+        viewYear < startYear ||
+        (viewYear === startYear && viewMonth < startMonth)
+    ) {
+        return false;
+    }
+
+    if (subscription.subscriptionType === "Yearly") {
+        return viewMonth === startMonth;
+    }
+
+    return true;
 }
 
 function updateDashboard() {
