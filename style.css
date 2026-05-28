@@ -614,3 +614,21 @@ select {
 #subscriptionList .compact-expense-price {
     color: #7c3aed;
 }
+
+.yearly-renewal-highlight {
+    background: #fff7ed;
+    border-left: 5px solid #f97316;
+    border-radius: 10px;
+    padding-left: 12px;
+}
+
+.renewal-tag {
+    display: inline-block;
+    margin-top: 6px;
+    background: #fed7aa;
+    color: #9a3412;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: bold;
+}

@@ -145,17 +145,10 @@ function renderExpenses() {
     let categorySummary = document.getElementById("categorySummary");
     let expenseMonthTitle = document.getElementById("expenseMonthTitle");
 
-    let monthlySubscriptionTotal =
-    document.getElementById("monthlySubscriptionTotal");
-
-    let yearlySubscriptionTotal =
-    document.getElementById("yearlySubscriptionTotal");
-
-    let yearlyMonthlyEquivalent =
-    document.getElementById("yearlyMonthlyEquivalent");
-
-    let totalRecurringMonthly =
-    document.getElementById("totalRecurringMonthly");
+    let monthlySubscriptionTotal = document.getElementById("monthlySubscriptionTotal");
+    let yearlySubscriptionTotal = document.getElementById("yearlySubscriptionTotal");
+    let yearlyMonthlyEquivalent = document.getElementById("yearlyMonthlyEquivalent");
+    let totalRecurringMonthly = document.getElementById("totalRecurringMonthly");
 
     let monthKey = getMonthKey(viewingDate);
 
@@ -165,60 +158,52 @@ function renderExpenses() {
             year: "numeric"
         });
 
-    let monthlyExpenses = expenses
-        .filter(expense => expense.month === monthKey)
-        .sort((a, b) => new Date(b.date) - new Date(a.date));
-
-    let subscriptions = expenses
-        .filter(expense => expense.subscription)
-        .sort((a, b) => a.name.localeCompare(b.name));
-
-    let monthlySubscriptions =
-    subscriptions.filter(subscription => {
-        return (subscription.subscriptionType || "Monthly") === "Monthly";
+    let normalExpenses = expenses.filter(expense => {
+        return !expense.subscription && expense.month === monthKey;
     });
 
-    let yearlySubscriptions =
-    subscriptions.filter(subscription => {
-        return subscription.subscriptionType === "Yearly";
+    let subscriptions = expenses.filter(expense => {
+        return expense.subscription;
     });
 
-    let monthlyTotal =
-    monthlySubscriptions.reduce((sum, subscription) => {
-        return sum + Number(subscription.price);
-    }, 0);
+    let subscriptionsThisMonth = subscriptions.filter(subscription => {
+        return subscriptionOccursInMonth(subscription, viewingDate);
+    });
 
-    let yearlyTotal =
-    yearlySubscriptions.reduce((sum, subscription) => {
-        return sum + Number(subscription.price);
-    }, 0);
+    let monthlyExpensesForTotal = [
+        ...normalExpenses,
+        ...subscriptionsThisMonth
+    ];
 
-    let yearlyEquivalent =
-    yearlyTotal / 12;
-
-    let totalRecurring =
-    monthlyTotal + yearlyEquivalent;
-
-    monthlySubscriptionTotal.textContent =
-    monthlyTotal.toFixed(2);
-
-    yearlySubscriptionTotal.textContent =
-    yearlyTotal.toFixed(2);
-
-    yearlyMonthlyEquivalent.textContent =
-    yearlyEquivalent.toFixed(2);
-
-    totalRecurringMonthly.textContent =
-    totalRecurring.toFixed(2);
-
-    let normalExpenses = monthlyExpenses
-        .filter(expense => !expense.subscription);
-
-    let total = monthlyExpenses.reduce((sum, expense) => {
+    let total = monthlyExpensesForTotal.reduce((sum, expense) => {
         return sum + Number(expense.price);
     }, 0);
 
     monthTotal.textContent = total.toFixed(2);
+
+    let monthlySubscriptions = subscriptions.filter(subscription => {
+        return (subscription.subscriptionType || "Monthly") === "Monthly";
+    });
+
+    let yearlySubscriptions = subscriptions.filter(subscription => {
+        return subscription.subscriptionType === "Yearly";
+    });
+
+    let monthlyRecurringTotal = monthlySubscriptions.reduce((sum, subscription) => {
+        return sum + Number(subscription.price);
+    }, 0);
+
+    let yearlyRecurringTotal = yearlySubscriptions.reduce((sum, subscription) => {
+        return sum + Number(subscription.price);
+    }, 0);
+
+    let yearlyEquivalent = yearlyRecurringTotal / 12;
+    let recurringMonthlyTotal = monthlyRecurringTotal + yearlyEquivalent;
+
+    monthlySubscriptionTotal.textContent = monthlyRecurringTotal.toFixed(2);
+    yearlySubscriptionTotal.textContent = yearlyRecurringTotal.toFixed(2);
+    yearlyMonthlyEquivalent.textContent = yearlyEquivalent.toFixed(2);
+    totalRecurringMonthly.textContent = recurringMonthlyTotal.toFixed(2);
 
     expenseList.innerHTML = "";
     subscriptionList.innerHTML = "";
@@ -233,7 +218,7 @@ function renderExpenses() {
         Others: []
     };
 
-    normalExpenses.forEach(expense => {
+    monthlyExpensesForTotal.forEach(expense => {
         if (!categories[expense.category]) {
             categories[expense.category] = [];
         }
@@ -258,87 +243,159 @@ function renderExpenses() {
         </div>
     `;
 
-    if (subscriptions.length === 0) {
-        subscriptionList.innerHTML = "<li>No subscriptions added.</li>";
-    } else {
-        let subscriptionGroups = {
-            Monthly: subscriptions.filter(subscription => {
-                return (subscription.subscriptionType || "Monthly") === "Monthly";
-            }),
+    renderSubscriptionGroups(subscriptions, subscriptionList);
+    renderNormalExpenseGroups(normalExpenses, expenseList);
+}
 
-            Yearly: subscriptions.filter(subscription => {
-                return subscription.subscriptionType === "Yearly";
-            })
-        };
+function isYearlyRenewalThisMonth(subscription) {
+    if (subscription.subscriptionType !== "Yearly") return false;
 
-        Object.keys(subscriptionGroups).forEach(type => {
-            let group = subscriptionGroups[type];
+    let startDate =
+        subscription.subscriptionStartDate || subscription.date;
 
-            if (group.length === 0) return;
+    if (!startDate) return false;
 
-            let groupTotal = group.reduce((sum, subscription) => {
-                return sum + Number(subscription.price);
-            }, 0);
+    let start = parseDate(startDate);
 
-            let groupId = `subscription-${type}`;
+    return start.getMonth() === viewingDate.getMonth();
+}
 
-            let wrapper = document.createElement("li");
-            wrapper.classList.add("expense-category-card");
+function subscriptionOccursInMonth(subscription, monthDate) {
+    let startDate = subscription.subscriptionStartDate || subscription.date;
 
-            wrapper.innerHTML = `
-                <button class="expense-category-toggle"
-                        onclick="toggleExpenseCategory('${groupId}')">
-                    <span>▶ ${type} Subscriptions</span>
+    if (!startDate) return false;
 
-                    <strong>
-                        ${
-                            type === "Yearly"
-                                ? `$${groupTotal.toFixed(2)}/year`
-                                : `$${groupTotal.toFixed(2)}/month`
-                        }
-                    </strong>
-                </button>
+    let start = parseDate(startDate);
 
-                <div id="expense-category-${groupId}"
-                    class="expense-category-content">
+    let viewYear = monthDate.getFullYear();
+    let viewMonth = monthDate.getMonth();
 
-                    ${group.map(subscription => `
-                        <div class="compact-expense-item">
-                            <div>
-                                <strong>${escapeHtml(subscription.name)}</strong>
+    let startYear = start.getFullYear();
+    let startMonth = start.getMonth();
 
-                                <p>
-                                    Category: ${subscription.category}<br>
-                                    Started: ${subscription.subscriptionStartDate || subscription.date}
-                                    ${
-                                        type === "Yearly"
-                                            ? `<br>Monthly equivalent: $${(Number(subscription.price) / 12).toFixed(2)}`
-                                            : ""
-                                    }
-                                </p>
-                            </div>
-
-                            <div class="compact-expense-price">
-                                $${Number(subscription.price).toFixed(2)}
-                            </div>
-
-                            <button onclick="deleteExpense('${subscription.firebaseId}')">
-                                Delete
-                            </button>
-                        </div>
-                    `).join("")}
-
-                </div>
-            `;
-
-            subscriptionList.append(wrapper);
-        });
+    if (
+        viewYear < startYear ||
+        (viewYear === startYear && viewMonth < startMonth)
+    ) {
+        return false;
     }
 
+    if (subscription.subscriptionType === "Yearly") {
+        return viewMonth === startMonth;
+    }
+
+    return true;
+}
+
+function renderSubscriptionGroups(subscriptions, subscriptionList) {
+    if (subscriptions.length === 0) {
+        subscriptionList.innerHTML = "<li>No subscriptions added.</li>";
+        return;
+    }
+
+    let subscriptionGroups = {
+        Monthly: subscriptions.filter(subscription => {
+            return (subscription.subscriptionType || "Monthly") === "Monthly";
+        }),
+
+        Yearly: subscriptions.filter(subscription => {
+            return subscription.subscriptionType === "Yearly";
+        })
+    };
+
+    Object.keys(subscriptionGroups).forEach(type => {
+        let group = subscriptionGroups[type];
+
+        if (group.length === 0) return;
+
+        let groupTotal = group.reduce((sum, subscription) => {
+            return sum + Number(subscription.price);
+        }, 0);
+
+        let groupId = `subscription-${type}`;
+
+        let wrapper = document.createElement("li");
+        wrapper.classList.add("expense-category-card");
+
+        wrapper.innerHTML = `
+            <button class="expense-category-toggle"
+                    onclick="toggleExpenseCategory('${groupId}')">
+                <span>▶ ${type} Subscriptions</span>
+
+                <strong>
+                    ${
+                        type === "Yearly"
+                            ? `$${groupTotal.toFixed(2)}/year`
+                            : `$${groupTotal.toFixed(2)}/month`
+                    }
+                </strong>
+            </button>
+
+            <div id="expense-category-${groupId}"
+                 class="expense-category-content">
+
+                ${group.map(subscription => `
+                    <div class="compact-expense-item ${
+                        isYearlyRenewalThisMonth(subscription)
+                            ? "yearly-renewal-highlight"
+                            : ""
+                    }">
+                        <div>
+                            <strong>${escapeHtml(subscription.name)}</strong>
+
+                            <p>
+                                Category: ${subscription.category}<br>
+                                Started: ${subscription.subscriptionStartDate || subscription.date}
+                                ${
+                                    type === "Yearly"
+                                        ? `
+                                            <br>Monthly equivalent: $${(Number(subscription.price) / 12).toFixed(2)}
+                                            ${
+                                                isYearlyRenewalThisMonth(subscription)
+                                                    ? `<br><span class="renewal-tag">Renews this month</span>`
+                                                    : ""
+                                            }
+                                        `
+                                        : ""
+                                }
+                            </p>
+                        </div>
+
+                        <div class="compact-expense-price">
+                            $${Number(subscription.price).toFixed(2)}
+                        </div>
+
+                        <button onclick="deleteExpense('${subscription.firebaseId}')">
+                            Delete
+                        </button>
+                    </div>
+                `).join("")}
+
+            </div>
+        `;
+
+        subscriptionList.append(wrapper);
+    });
+}
+
+function renderNormalExpenseGroups(normalExpenses, expenseList) {
     if (normalExpenses.length === 0) {
         expenseList.innerHTML = "<li>No normal expenses for this month.</li>";
         return;
     }
+
+    let categories = {
+        Entertainment: [],
+        Food: [],
+        Studies: [],
+        Transportation: [],
+        PayNow: [],
+        Others: []
+    };
+
+    normalExpenses.forEach(expense => {
+        categories[expense.category].push(expense);
+    });
 
     Object.keys(categories).forEach(category => {
         let categoryExpenses = categories[category];
