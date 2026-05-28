@@ -1,4 +1,4 @@
-const CACHE_NAME = "life-manager-v14";
+const CACHE_NAME = "life-manager-v17";
 
 const FILES_TO_CACHE = [
     "./",

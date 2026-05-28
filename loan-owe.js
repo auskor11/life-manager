@@ -273,8 +273,40 @@ async function addLoan() {
     }
 
     if (splitPeople.length === 0) {
-        alert("Please click Generate Split first.");
-        return;
+        let totalCost = Number(document.getElementById("totalCost").value);
+
+        let names = document.getElementById("peopleNames").value
+            .split(",")
+            .map(name => name.trim())
+            .filter(name => name !== "");
+
+        if (names.length === 0) {
+            alert("Please enter at least one name.");
+            return;
+        }
+
+        let equalPercentage =
+            Math.floor((100 / names.length) * 100) / 100;
+
+        let remaining =
+            100 - equalPercentage * names.length;
+
+        splitPeople = names.map((name, index) => {
+            let percentage = equalPercentage;
+
+            if (index === names.length - 1) {
+                percentage = Number((percentage + remaining).toFixed(2));
+            }
+
+            return {
+                name: name,
+                percentage: percentage,
+                amount: totalCost * percentage / 100,
+                locked: false,
+                settled: false,
+                settledDate: null
+            };
+        });
     }
 
     let people = splitPeople.map(person => ({

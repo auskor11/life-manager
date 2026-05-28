@@ -12,6 +12,7 @@ import {
 from "./firebase.js";
 
 let events = [];
+let loans = [];
 let tasks = [];
 let expenses = [];
 let currentDate = new Date();
@@ -37,6 +38,10 @@ function tasksCollection() {
 
 function expensesCollection() {
     return collection(db, "users", currentUser.uid, "expenses");
+}
+
+function loansCollection() {
+    return collection(db, "users", currentUser.uid, "loans");
 }
 
 function eventDoc(firebaseId) {
@@ -118,6 +123,7 @@ function getSubscriptionRenewalDates(subscription) {
 }
 
 async function loadData() {
+    let loanSnapshot = await getDocs(loansCollection());
     let eventSnapshot = await getDocs(eventsCollection());
     let taskSnapshot = await getDocs(tasksCollection());
     let expenseSnapshot = await getDocs(expensesCollection());
@@ -133,6 +139,11 @@ async function loadData() {
     }));
 
     expenses = expenseSnapshot.docs.map(item => ({
+        firebaseId: item.id,
+        ...item.data()
+    }));
+
+    loans = loanSnapshot.docs.map(item => ({
         firebaseId: item.id,
         ...item.data()
     }));
@@ -345,6 +356,10 @@ function renderCalendar() {
                 itemDiv.classList.add("calendar-overdue-task");
             } else if (item.type === "subscription") {
                 itemDiv.classList.add("calendar-subscription");
+            } else if (item.type === "loan") {
+                itemDiv.classList.add("calendar-loan");
+            } else if (item.type === "overdue-loan") {
+                itemDiv.classList.add("calendar-overdue-loan");
             } else {
                 itemDiv.classList.add("calendar-event");
             }
@@ -429,12 +444,51 @@ function getItemsForDate(date) {
         }
     });
 
+    loans.forEach(loan => {
+        if (!loan.dueDate || loan.dueDate !== date) return;
+
+        let people = getLoanPeopleArray(loan);
+
+        let unpaidPeople = people.filter(person => {
+            return !person.settled;
+        });
+
+        if (unpaidPeople.length === 0) return;
+
+        let unpaidTotal = unpaidPeople.reduce((sum, person) => {
+            let amount = Number(person.amount || 0);
+            let paid = Number(person.paidAmount || 0);
+
+            return sum + Math.max(amount - paid, 0);
+        }, 0);
+
+        let label =
+            loan.type === "owedToMe"
+                ? `Loan due: ${loan.title} +$${unpaidTotal.toFixed(2)}`
+                : `Debt due: ${loan.title} -$${unpaidTotal.toFixed(2)}`;
+
+        result.push({
+            name: label,
+            type: isOverdue(loan.dueDate)
+                ? "overdue-loan"
+                : "loan"
+        });
+    });
+
     return result;
 }
 
 function previousMonth() {
     currentDate.setMonth(currentDate.getMonth() - 1);
     renderCalendar();
+}
+
+function getLoanPeopleArray(loan) {
+    if (Array.isArray(loan.people)) {
+        return loan.people;
+    }
+
+    return [];
 }
 
 function nextMonth() {
