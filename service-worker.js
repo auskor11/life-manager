@@ -1,4 +1,4 @@
-const CACHE_NAME = "life-manager-v1";
+const CACHE_NAME = "life-manager-v14";
 
 const FILES_TO_CACHE = [
     "./",
@@ -8,6 +8,7 @@ const FILES_TO_CACHE = [
     "./calendar.html",
     "./expense.html",
     "./expense-archive.html",
+    "./loan-owe.html",
     "./style.css",
     "./firebase.js",
     "./login.js",
@@ -16,6 +17,7 @@ const FILES_TO_CACHE = [
     "./calendar.js",
     "./expense.js",
     "./expense-archive.js",
+    "./loan-owe.js",
     "./manifest.json"
 ];
 

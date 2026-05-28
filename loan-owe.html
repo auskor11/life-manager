@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan / Owe</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#6366f1">
+</head>
+<body>
+
+<div class="app-layout">
+    <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+
+    <div class="sidebar" id="sidebar">
+        <h2>My App</h2>
+
+        <a href="index.html">Dashboard</a>
+        <a href="task-manager.html">Task Manager</a>
+        <a href="calendar.html">Calendar</a>
+        <a href="expense.html" class="active-link">Expenses</a>
+
+        <button type="button" onclick="logout()" class="logout-btn">Logout</button>
+    </div>
+
+    <div class="main-content">
+        <h1>Loan / Owe</h1>
+
+        <div class="expense-archive-link">
+            <a href="expense.html">← Back to Expenses</a>
+        </div>
+
+        <div class="expense-page">
+
+            <div class="card">
+                <h2>Add Loan / Owe</h2>
+
+                <input id="loanTitle" type="text" placeholder="Item name, e.g. Dinner, Grab, Movie tickets">
+
+                <select id="loanType">
+                    <option value="owedToMe">Someone owes me</option>
+                    <option value="iOwe">I owe someone</option>
+                </select>
+
+                <input id="totalCost" type="number" step="0.01" placeholder="Total cost">
+
+                <textarea id="peopleNames" placeholder="Enter names separated by commas, e.g. John, Mary, Alex"></textarea>
+
+                <button onclick="generateSplit()">Generate Split</button>
+
+                <div id="splitSection" class="split-section" style="display:none;">
+                    <h3>Adjust Split</h3>
+
+                    <p>
+                        Total Percentage:
+                        <strong id="totalPercentage">0%</strong>
+                    </p>
+
+                    <div id="splitList"></div>
+                </div>
+
+                <label class="date-label">Due Date</label>
+                <input id="loanDueDate" type="date">
+
+                <button onclick="addLoan()">Add</button>
+            </div>
+
+            <div class="card">
+                <h2>Summary</h2>
+
+                <div class="task-stat-row">
+                    <span>Total owed to me</span>
+                    <span id="totalOwedToMe">$0.00</span>
+                </div>
+
+                <div class="task-stat-row">
+                    <span>Total I owe</span>
+                    <span id="totalIOwe">$0.00</span>
+                </div>
+
+                <div class="task-stat-row">
+                    <span>Net Position</span>
+                    <span id="netLoanPosition">$0.00</span>
+                </div>
+
+                <h2>Someone Owes Me</h2>
+                <ul id="owedToMeList"></ul>
+
+                <h2>I Owe Someone</h2>
+                <ul id="iOweList"></ul>
+
+                <h2>Fully Settled</h2>
+                <ul id="settledList"></ul>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script type="module" src="loan-owe.js"></script>
+
+<script>
+if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("service-worker.js");
+}
+</script>
+
+</body>
+</html>

@@ -666,3 +666,110 @@ hr {
         font-size: 22px;
     }
 }
+
+textarea {
+    width: 100%;
+    padding: 14px 15px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: white;
+    font-size: 15px;
+    margin-bottom: 12px;
+    outline: none;
+    resize: vertical;
+    min-height: 90px;
+    font-family: inherit;
+}
+
+textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
+}
+
+textarea {
+    width: 100%;
+    padding: 14px 15px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: white;
+    font-size: 15px;
+    margin-bottom: 12px;
+    outline: none;
+    resize: vertical;
+    min-height: 90px;
+    font-family: inherit;
+    transition: 0.2s ease;
+}
+
+textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
+}
+
+textarea {
+    width: 100%;
+    padding: 14px 15px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: white;
+    font-size: 15px;
+    margin-bottom: 12px;
+    outline: none;
+    resize: vertical;
+    min-height: 90px;
+    font-family: inherit;
+    transition: 0.2s ease;
+}
+
+textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
+}
+
+.split-section {
+    background: #f8fafc;
+    border-radius: var(--radius-lg);
+    padding: 18px;
+    margin: 18px 0;
+    border: 1px solid var(--border);
+}
+
+.split-person-card {
+    background: white;
+    border-radius: var(--radius-md);
+    padding: 16px;
+    margin-bottom: 14px;
+    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
+}
+
+.split-person-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+    font-size: 15px;
+}
+
+.split-person-card input[type="range"] {
+    padding: 0;
+    margin-bottom: 12px;
+}
+
+.split-person-card input[type="number"] {
+    margin-bottom: 0;
+}
+
+.loan-payment-controls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.loan-payment-controls input {
+    max-width: 110px;
+    margin-bottom: 0;
+}
+
+.loan-payment-controls button {
+    white-space: nowrap;
+}

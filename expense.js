@@ -7,7 +7,8 @@ import {
     deleteDoc,
     doc,
     signOut,
-    onAuthStateChanged
+    onAuthStateChanged,
+    onSnapshot
 }
 from "./firebase.js";
 
@@ -34,15 +35,15 @@ function expenseDoc(firebaseId) {
     return doc(db, "users", currentUser.uid, "expenses", firebaseId);
 }
 
-async function loadExpenses() {
-    let snapshot = await getDocs(expensesCollection());
+function loadExpenses() {
+    onSnapshot(expensesCollection(), snapshot => {
+        expenses = snapshot.docs.map(item => ({
+            firebaseId: item.id,
+            ...item.data()
+        }));
 
-    expenses = snapshot.docs.map(item => ({
-        firebaseId: item.id,
-        ...item.data()
-    }));
-
-    renderExpenses();
+        renderExpenses();
+    });
 }
 
 async function addExpense() {

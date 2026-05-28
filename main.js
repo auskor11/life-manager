@@ -9,6 +9,7 @@ import {
 from "./firebase.js";
 
 let tasks = [];
+let loans = [];
 let events = [];
 let expenses = [];
 let currentUser = null;
@@ -172,6 +173,10 @@ async function loadDashboardData() {
         collection(db, "users", currentUser.uid, "expenses")
     );
 
+    let loanSnapshot = await getDocs(
+        collection(db, "users", currentUser.uid, "loans")
+    );
+
     tasks = taskSnapshot.docs.map(item => ({
         firebaseId: item.id,
         ...item.data()
@@ -187,10 +192,57 @@ async function loadDashboardData() {
         ...item.data()
     }));
 
+    loans = loanSnapshot.docs.map(item => ({
+        firebaseId: item.id,
+        ...item.data()
+    }));
+
     updateDashboard();
     renderUpcomingEvents();
     renderNotifications();
     updateExpenseDashboard();
+    updateLoanDashboard();
+}
+
+function updateLoanDashboard() {
+    let peopleOweMeElement = document.getElementById("dashboardPeopleOweMe");
+    let othersOweMeElement = document.getElementById("dashboardOthersOweMe");
+    let iOweOthersElement = document.getElementById("dashboardIOweOthers");
+
+    if (!peopleOweMeElement || !othersOweMeElement || !iOweOthersElement) return;
+
+    let peopleOweMeCount = 0;
+    let othersOweMeTotal = 0;
+    let iOweOthersTotal = 0;
+
+    loans.forEach(loan => {
+        let people = getPeopleArray(loan);
+
+        people.forEach(person => {
+            if (!person.settled) {
+                if (loan.type === "owedToMe") {
+                    peopleOweMeCount++;
+                    othersOweMeTotal += Number(person.amount);
+                }
+
+                if (loan.type === "iOwe") {
+                    iOweOthersTotal += Number(person.amount);
+                }
+            }
+        });
+    });
+
+    peopleOweMeElement.textContent = peopleOweMeCount;
+    othersOweMeElement.textContent = `$${othersOweMeTotal.toFixed(2)}`;
+    iOweOthersElement.textContent = `$${iOweOthersTotal.toFixed(2)}`;
+}
+
+function getPeopleArray(loan) {
+    if (Array.isArray(loan.people)) {
+        return loan.people;
+    }
+
+    return [];
 }
 
 function updateExpenseDashboard() {

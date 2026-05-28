@@ -1,14 +1,26 @@
-# 🌟 Life Manager
+# 🌟 Life Manager v10
 
 A modern productivity web app built with **HTML, CSS, JavaScript, and Firebase**.
 
-Life Manager helps users manage their **tasks, deadlines, events, expenses, and subscriptions** across devices with secure cloud syncing and authentication.
+Life Manager helps users manage their:
+
+- ✅ Tasks
+- 📆 Events
+- 💰 Expenses
+- 🔁 Subscriptions
+- 🤝 Loans / Shared Payments
+- 🔔 Reminders
+
+with secure cloud syncing across devices.
 
 ---
 
-## ✨ Features
+# ✨ Features
 
-### ✅ Task Manager
+---
+
+# ✅ Task Manager
+
 - ➕ Add tasks with deadlines
 - ✏️ Edit existing tasks
 - ✔️ Mark tasks as completed
@@ -16,10 +28,12 @@ Life Manager helps users manage their **tasks, deadlines, events, expenses, and 
 - 🔍 Search archived tasks
 - 🚨 Overdue task indicators
 - 📅 Deadline sorting
+- ☁️ Firebase syncing
 
 ---
 
-### 📆 Calendar
+# 📆 Calendar
+
 - 🗓️ Monthly calendar view
 - 🎉 Add events
 - ⏳ Multi-day event support
@@ -31,16 +45,19 @@ Life Manager helps users manage their **tasks, deadlines, events, expenses, and 
 
 ---
 
-### 💰 Expense Tracker
-- ➕ Add expenses with name, category, and price
+# 💰 Expense Tracker
+
+- ➕ Add expenses with categories
 - 📂 Categorized expense tracking
 - 📅 Monthly expense display
 - 🗃️ Archive navigation for previous months
-- 📊 Monthly expense totals
+- 📊 Monthly cash summaries
 - 📈 Category summaries
-- 📦 Collapsible expense categories for a cleaner interface
+- 📦 Collapsible expense categories
+- 💵 Cash in / cash out tracking
 
-#### Supported Categories
+### Supported Categories
+
 - 🎮 Entertainment
 - 🍔 Food
 - 📚 Studies
@@ -50,37 +67,128 @@ Life Manager helps users manage their **tasks, deadlines, events, expenses, and 
 
 ---
 
-### 🔁 Subscription Tracking
+# 🤝 Loan / Owe System
+
+A fully integrated shared-payment and debt tracking system.
+
+## Features
+
+### 💸 Shared Expense Tracking
+
+Track:
+
+- money people owe you
+- money you owe others
+- group expenses
+- meal splitting
+- transport splitting
+- shared purchases
+
+---
+
+## 👥 Dynamic Group Splitting
+
+Example:
+
+```txt
+Dinner: $100
+
+John → 50%
+Mary → 30%
+Alex → 10%
+Ben → 10%
+```
+
+Each person’s contribution can be customized with:
+
+- 🎚️ Sliders
+- 🔢 Manual percentage input
+- ⚖️ Automatic balancing to 100%
+
+---
+
+## 💰 Instalment Payments
+
+People can repay partially over time.
+
+Example:
+
+```txt
+John owes $50
+
+Day 1 → pays $20
+Day 2 → pays $15
+Day 3 → settles remaining $15
+```
+
+The app automatically tracks:
+
+- amount paid
+- remaining balance
+- payment history
+- settled status
+
+---
+
+## 🔄 Integrated With Expense System
+
+Loan repayments automatically update expenses.
+
+### If others owe you:
+
+- Initial payment creates a cash out expense
+- Instalments create cash in records
+
+### If you owe others:
+
+- Payments create expenses automatically
+
+---
+
+## 📊 Dashboard Loan Analytics
+
+Dashboard displays:
+
+- 👥 Number of people owing you money
+- 💰 Total amount others owe you
+- 💸 Total amount you owe others
+
+---
+
+# 🔁 Subscription Tracking
+
 - 💳 Add subscriptions as expenses
 - 🗓️ Monthly subscription support
 - 📆 Yearly subscription support
-- 📅 Subscription start dates
 - 🔄 Automatic renewal tracking
-- 📆 Renewal dates displayed in the calendar
-- 📊 Monthly equivalent calculation for yearly subscriptions
-- 📈 Total recurring monthly cost calculation
-- 📂 Collapsible subscription sections
+- 📅 Renewal dates displayed in calendar
+- 📊 Monthly equivalent calculations
+- 📈 Recurring monthly cost calculations
 
 ---
 
-### 📊 Dashboard
-- 📈 Task statistics
-- ⏰ Upcoming tasks and events
-- 🔔 Reminder notifications
-- 📱 Responsive layout
+# 🔔 Reminder System
 
----
-
-### 🔔 Reminder System
 - ⏰ 1-week reminders
 - 📅 1-day reminders
-- 🚨 Due-today task reminders
-- 📋 Reminders sorted by nearest deadline
-- 🔔 Web popup reminders
+- 🚨 Due-today reminders
+- 📋 Sorted reminder list
+- 🔔 Browser popup notifications
 
 ---
 
-### 🔐 Authentication
+# 📊 Dashboard
+
+- 📈 Expense summaries
+- 📋 Task statistics
+- 📆 Upcoming events
+- 🤝 Loan analytics
+- 🔔 Reminder notifications
+
+---
+
+# 🔐 Authentication
+
 - Firebase Authentication
 - 📧 Email/password login
 - 👤 User-specific cloud data
@@ -89,14 +197,28 @@ Life Manager helps users manage their **tasks, deadlines, events, expenses, and 
 
 ---
 
-### ☁️ Cloud Storage
+# ☁️ Cloud Storage
+
 - Firebase Firestore integration
 - 🔄 Cross-device syncing
-- 🛡️ Secure per-user data storage
+- 🛡️ Secure per-user data isolation
 
 ---
 
-## 🛠️ Tech Stack
+# 📱 Progressive Web App (PWA)
+
+Life Manager is installable as a mobile app.
+
+Features include:
+
+- 📲 Add to Home Screen
+- ⚡ Offline caching
+- 🔄 Service worker updates
+- 📱 Native-app-like experience
+
+---
+
+# 🛠️ Tech Stack
 
 - 🌐 HTML
 - 🎨 CSS
@@ -104,10 +226,11 @@ Life Manager helps users manage their **tasks, deadlines, events, expenses, and 
 - 🔥 Firebase Hosting
 - 🔐 Firebase Authentication
 - ☁️ Firebase Firestore
+- 📱 PWA Service Workers
 
 ---
 
-## 📂 Project Structure
+# 📂 Project Structure
 
 ```txt
 .
@@ -116,6 +239,8 @@ Life Manager helps users manage their **tasks, deadlines, events, expenses, and 
 ├── task-manager.html
 ├── calendar.html
 ├── expense.html
+├── expense-archive.html
+├── loan-owe.html
 ├── style.css
 ├── firebase.js
 ├── login.js
@@ -123,142 +248,16 @@ Life Manager helps users manage their **tasks, deadlines, events, expenses, and 
 ├── taskManager.js
 ├── calendar.js
 ├── expense.js
-├── firebase.json
+├── expense-archive.js
+├── loan-owe.js
+├── service-worker.js
+├── manifest.json
 └── 404.html
 ```
 
 ---
 
-## 🚀 Firebase Setup
-
-### 1️⃣ Create a Firebase Project
-
-Go to:
-
-```txt
-https://console.firebase.google.com
-```
-
-Create a new Firebase project.
-
----
-
-### 2️⃣ Enable Authentication
-
-In Firebase Console:
-
-```txt
-Authentication
-→ Sign-in method
-→ Email/Password
-→ Enable
-```
-
----
-
-### 3️⃣ Enable Firestore Database
-
-In Firebase Console:
-
-```txt
-Firestore Database
-→ Create Database
-→ Start in test mode
-```
-
----
-
-### 4️⃣ Firestore Security Rules
-
-Replace your Firestore rules with:
-
-```js
-rules_version = '2';
-
-service cloud.firestore {
-  match /databases/{database}/documents {
-
-    match /users/{userId}/{document=**} {
-      allow read, write:
-      if request.auth != null
-      && request.auth.uid == userId;
-    }
-
-  }
-}
-```
-
-This ensures each user can only access their own data.
-
----
-
-## 🚀 Deployment
-
-Install Firebase CLI:
-
-```bash
-npm install -g firebase-tools
-```
-
-Login to Firebase:
-
-```bash
-firebase login
-```
-
-Initialize Firebase Hosting:
-
-```bash
-firebase init hosting
-```
-
-Deploy the app:
-
-```bash
-firebase deploy
-```
-
----
-
-## 💻 GitHub Setup
-
-Configure Git:
-
-```bash
-git config --global user.name "Your Name"
-git config --global user.email "your_email@example.com"
-```
-
-Push project to GitHub:
-
-```bash
-git init
-git add .
-git commit -m "Initial commit"
-git branch -M main
-git remote add origin YOUR_REPO_URL
-git push -u origin main
-```
-
----
-
-## 🌱 Future Improvements
-
-- 📩 Email reminder system
-- 🔔 Push notifications
-- 🧠 AI expense analysis
-- 📊 Spending analytics charts
-- 📝 Notes system
-- 🔥 Habit tracker
-- 🌙 Dark mode
-- 🎯 Drag-and-drop tasks
-- ✏️ Event editing
-- 🔁 Recurring tasks
-- 📱 Mobile app version
-
----
-
-## 👨‍💻 Author
+# 👨‍💻 Author
 
 Built by **Austin Kor**
 
