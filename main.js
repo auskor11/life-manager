@@ -22,6 +22,142 @@ onAuthStateChanged(auth, user => {
     loadDashboardData();
 });
 
+function getTodayString() {
+    let today = new Date();
+
+    return formatDate(today);
+}
+
+function formatDate(date) {
+    let year = date.getFullYear();
+    let month = String(date.getMonth() + 1).padStart(2, "0");
+    let day = String(date.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+}
+
+function daysBetween(todayDate, targetDate) {
+    let today = parseDate(todayDate);
+    let target = parseDate(targetDate);
+
+    today.setHours(0, 0, 0, 0);
+    target.setHours(0, 0, 0, 0);
+
+    let diff = target - today;
+
+    return Math.round(diff / (1000 * 60 * 60 * 24));
+}
+
+function renderNotifications() {
+    let notificationBox =
+    document.getElementById("notificationBox");
+
+    let notificationList =
+    document.getElementById("notificationList");
+
+    if (!notificationBox || !notificationList) return;
+
+    let today =
+    getTodayString();
+
+    let reminders = [];
+
+    tasks.forEach(task => {
+        if (!task.completed && task.deadline) {
+            let daysLeft =
+            daysBetween(today, task.deadline);
+
+            if (
+                daysLeft === 7 ||
+                daysLeft === 1 ||
+                daysLeft === 0
+            ) {
+                reminders.push({
+                    type: "Task",
+                    name: task.name,
+                    date: task.deadline,
+                    daysLeft: daysLeft
+                });
+            }
+        }
+    });
+
+    events.forEach(event => {
+        let startDate =
+        event.startDate || event.date;
+
+        if (!startDate) return;
+
+        let eventDate =
+        event.yearly
+        ? formatDate(getNextOccurrence(startDate))
+        : startDate;
+
+        let daysLeft =
+        daysBetween(today, eventDate);
+
+        if (
+            daysLeft === 7 ||
+            daysLeft === 1
+        ) {
+            reminders.push({
+                type: "Event",
+                name: event.name,
+                date: eventDate,
+                daysLeft: daysLeft
+            });
+        }
+    });
+
+    reminders.sort((a, b) => {
+        return parseDate(a.date) - parseDate(b.date);
+    });
+
+    notificationList.innerHTML = "";
+
+    if (reminders.length === 0) {
+        notificationBox.style.display = "none";
+        return;
+    }
+
+    notificationBox.style.display = "block";
+
+    reminders.forEach(item => {
+        let label = "";
+
+        if (item.daysLeft === 0) {
+            label = "Due today";
+        } else if (item.daysLeft === 1) {
+            label = "Tomorrow";
+        } else if (item.daysLeft === 7) {
+            label = "In 1 week";
+        }
+
+        notificationList.innerHTML += `
+            <div class="notification-item">
+                <strong>
+                    ${escapeHtml(item.type)}:
+                    ${escapeHtml(item.name)}
+                </strong>
+                <br>
+
+                Date: ${item.date}
+                <br>
+
+                <span class="notification-days">
+                    ${label}
+                </span>
+            </div>
+        `;
+    });
+
+    setTimeout(() => {
+        alert(
+            `🔔 You have ${reminders.length} upcoming reminder(s).`
+        );
+    }, 500);
+}
+
 async function loadDashboardData() {
     let taskSnapshot = await getDocs(
         collection(db, "users", currentUser.uid, "tasks")
@@ -43,6 +179,7 @@ async function loadDashboardData() {
 
     updateDashboard();
     renderUpcomingEvents();
+    renderNotifications();
 }
 
 function updateDashboard() {

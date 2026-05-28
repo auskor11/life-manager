@@ -17,12 +17,18 @@
             <a href="index.html" class="active-link">Dashboard</a>
             <a href="task-manager.html">Task Manager</a>
             <a href="calendar.html">Calendar</a>
+            <a href="expense.html">Expenses</a>
 
             <button type = 'button' onclick="logout()" class="logout-btn">Logout</button>
         </div>
 
         <div class="main-content">
             <h1>Dashboard</h1>
+
+            <div id="notificationBox" class="notification-box" style="display:none;">
+                <h3>🔔 Reminders</h3>
+                <div id="notificationList"></div>
+            </div>
 
             <div class="dashboard-cards">
                 <div class="card">

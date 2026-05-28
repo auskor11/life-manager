@@ -13,6 +13,7 @@ from "./firebase.js";
 
 let events = [];
 let tasks = [];
+let expenses = [];
 let currentDate = new Date();
 let currentUser = null;
 
@@ -34,6 +35,10 @@ function tasksCollection() {
     return collection(db, "users", currentUser.uid, "tasks");
 }
 
+function expensesCollection() {
+    return collection(db, "users", currentUser.uid, "expenses");
+}
+
 function eventDoc(firebaseId) {
     return doc(db, "users", currentUser.uid, "events", firebaseId);
 }
@@ -51,9 +56,71 @@ function formatDate(date) {
     return `${year}-${month}-${day}`;
 }
 
+function getSubscriptionRenewalDates(subscription) {
+
+    let renewalDates = [];
+
+    if (!subscription.subscription)
+        return renewalDates;
+
+    let startDate =
+    subscription.subscriptionStartDate
+    || subscription.date;
+
+    if (!startDate)
+        return renewalDates;
+
+    let current =
+    parseDate(startDate);
+
+    let currentMonth =
+    currentDate.getMonth();
+
+    let currentYear =
+    currentDate.getFullYear();
+
+    current.setHours(0,0,0,0);
+
+    if (
+        subscription.subscriptionType
+        === "Yearly"
+    ) {
+
+        let renewal =
+        new Date(
+            currentYear,
+            current.getMonth(),
+            current.getDate()
+        );
+
+        renewalDates.push(
+            formatDate(renewal)
+        );
+
+    }
+
+    else {
+
+        let renewal =
+        new Date(
+            currentYear,
+            currentMonth,
+            current.getDate()
+        );
+
+        renewalDates.push(
+            formatDate(renewal)
+        );
+
+    }
+
+    return renewalDates;
+}
+
 async function loadData() {
     let eventSnapshot = await getDocs(eventsCollection());
     let taskSnapshot = await getDocs(tasksCollection());
+    let expenseSnapshot = await getDocs(expensesCollection());
 
     events = eventSnapshot.docs.map(item => ({
         firebaseId: item.id,
@@ -61,6 +128,11 @@ async function loadData() {
     }));
 
     tasks = taskSnapshot.docs.map(item => ({
+        firebaseId: item.id,
+        ...item.data()
+    }));
+
+    expenses = expenseSnapshot.docs.map(item => ({
         firebaseId: item.id,
         ...item.data()
     }));
@@ -271,6 +343,8 @@ function renderCalendar() {
                 itemDiv.classList.add("calendar-task");
             } else if (item.type === "overdue-task") {
                 itemDiv.classList.add("calendar-overdue-task");
+            } else if (item.type === "subscription") {
+                itemDiv.classList.add("calendar-subscription");
             } else {
                 itemDiv.classList.add("calendar-event");
             }
@@ -335,6 +409,22 @@ function getItemsForDate(date) {
                 type: isOverdue(task.deadline)
                     ? "overdue-task"
                     : "task"
+            });
+        }
+    });
+
+    expenses.forEach(expense => {
+        if (!expense.subscription) return;
+
+        let renewalDates =
+        getSubscriptionRenewalDates(expense);
+
+        if (renewalDates.includes(date)) {
+            result.push({
+                name:
+                `Subscription: ${expense.name} $${Number(expense.price).toFixed(2)}`,
+                type:
+                "subscription"
             });
         }
     });
