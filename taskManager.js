@@ -137,6 +137,10 @@ function renderTasks() {
                     Completed on: ${task.completedDate}
                     ${isOverdue(task.deadline) ? '<span class="late-tag">(Was Overdue)</span>' : ""}<br>
                 </div>
+
+                <button onclick="deleteArchivedTask('${task.firebaseId}')">
+                    Delete
+                </button>
             `;
 
             archiveList.append(li);
@@ -160,6 +164,11 @@ async function completeTask(firebaseId) {
         completedDate: today.toISOString().split("T")[0]
     });
 
+    loadTasks();
+}
+
+async function deleteArchivedTask(firebaseId) {
+    await deleteDoc(taskDoc(firebaseId));
     loadTasks();
 }
 
@@ -257,3 +266,4 @@ window.saveEdit = saveEdit;
 window.cancelEdit = cancelEdit;
 window.toggleSidebar = toggleSidebar;
 window.logout = logout;
+window.deleteArchivedTask = deleteArchivedTask;
